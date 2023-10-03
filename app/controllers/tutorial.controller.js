@@ -1,4 +1,4 @@
-const Tutorial = require("../model/tutorial.model.js");
+const student = require("../model/tutorial.model.js");
 
 exports.Create = (req,res) => {
     if(!req.body){
@@ -7,13 +7,16 @@ exports.Create = (req,res) => {
         })
     }
 
-    const newTutorial = new Tutorial({
-        title: req.body.title,
-        description: req.body.description,
-        published: req.body.published || false
+    const newstudent = new student({
+        id: req.body.id,
+        name: req.body.name,
+        lastname: req.body.lastname,
+        university: req.body.university,
+        graduated: req.body.graduated || false,
+        date: req.body.date
     })
 
-    Tutorial.create(newTutorial, (err, data) => { //ถ้าerrorแก้ตรงชื่อเด้อ
+    student.create(newstudent, (err, data) => { //ถ้าerrorแก้ตรงชื่อเด้อ//** */
         if(err){
             res.status(500).send({
                 message: err.message || "Some error occurred!"
@@ -25,10 +28,10 @@ exports.Create = (req,res) => {
     //res.send("Create");
 };
 
-exports.FindAll = (req,res) => {
-   const title = req.query.title;
+exports.FindAll = (req,res) => {/** */
+   const name = req.query.name;
 
-   Tutorial.getAll(title, (err, data) => {  //paramiter จะส่งค่าtitle และcallback function
+   student.getAll(name, (err, data) => {  //paramiter จะส่งค่าtitle และcallback function
         if(err){
              res.status(500).send({
                 message: err.message || "Some error occurred!"
@@ -39,19 +42,19 @@ exports.FindAll = (req,res) => {
    });
 };
 
-exports.FindOne = (req,res) => {
-    const id = req.params.id;
+exports.FindOne = (req,res) => {//** */
+    const name = req.params.name;
 
     
-    Tutorial.findById(id, (err, data) => {
+    student.findByName(name, (err, data) => {
         if(err){
             if(err.kind === "not_found"){
              res.status(404).send({
-                message: "Not found tutorial with id " + id
+                message: "Not found student with name " + name
              });
             }else{
                 res.status(500).send({
-                    message: "Error Tutorial with id " + id
+                    message: "Error student with name " + name
                 });
             }
         }else{
@@ -61,8 +64,8 @@ exports.FindOne = (req,res) => {
     //res.send({message: "FindOne"})
 };
 
-exports.FindAllpublished = (req,res) => {
-    Tutorial.getAllPublished((err, data) => {
+exports.FindAllgraduated = (req,res) => {
+    student.getAllgraduated((err, data) => {
         if(err){
             res.status(500).send({
                 message: err.message || "Some error occurred!"
@@ -74,13 +77,10 @@ exports.FindAllpublished = (req,res) => {
     //res.send({message: "FindAllpublished"})
 };
 
-exports.update = (req,res) => {
-    res.send({message: "update"})
-};
 
 exports.delete = (req,res) => {
-    const id = req.params.id;
-    Tutorial.remove(id,(err, data) => {
+    const no = req.params.no;
+    student.remove(no,(err, data) => {
         if(err){
             if(err.kind === 'not found'){
                 res.status(404).send({
@@ -88,7 +88,7 @@ exports.delete = (req,res) => {
                 })
             }else{
                 res.status(500).send({
-                    message: "Could not delete id " + id
+                    message: "Could not delete no. " + no
                 })
             }
         }else{
@@ -99,5 +99,14 @@ exports.delete = (req,res) => {
 };
 
 exports.deleteAll = (req,res) => {
-    res.send({message: "deleteAll"})
+    student.removeAll((err, data) => {
+        if(err){
+            res.tatus(500).send({
+                message: err.message || "Some error occurred!"
+            })
+        }else{
+            res.send({message: "All tutorials were delete successfully!"})//message: คือการใส่ข้อความ
+        }
+    })
+    //res.send({message: "deleteAll"})
 };

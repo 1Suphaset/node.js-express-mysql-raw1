@@ -1,39 +1,42 @@
 const sql = require("./db.js");
 
-const Tutorial = function(tutorial){  //table in database
-    this.title = tutorial.title;
-    this.description = tutorial.description;
-    this.published = tutorial.published;
+const student = function(student){  //table in database/ตัวสำหรับรับค่า
+    this.no = student.no;
+    this.name = student.name;
+    this.lastname = student.lastname;
+    this.university = student.university;
+    this.graduated = student.graduated;
+    this.date = student.date;
 }
 
 
-Tutorial.create = (newTutorial, result) => {
-    sql.query("INSERT INTO tutorials SET ?", newTutorial, (err, res) => {
+student.create = (newstudent, result) => {
+    sql.query("INSERT INTO students SET ?", newstudent, (err, res) => {
         if(err){
             result(err, null)
             return
         }
-        result(null, {id: res.insertId, ...newTutorial}) // ...คือการรับค่าได้มากกว่า1ค่า/กระจายค่า
+        result(null, {id: res.insertId, ...newstudent}) // ...คือการรับค่าได้มากกว่า1ค่า/กระจายค่า
     })
 }
 
-Tutorial.getAll = (title, result) => {
-    let sqltext = "SELECT * FROM tutorials"; //ตัวแปรlet คือตัวแปรที่สามารถทำงานได้เพียงภายในสโคปหรือปีกกาเท่านั้น //var สามารถเรียกใช้นอกฟังก์ชั่นได้
+student.getAll = (name, result) => {
+    let sqltext = "SELECT * FROM students"; //ตัวแปรlet คือตัวแปรที่สามารถทำงานได้เพียงภายในสโคปหรือปีกกาเท่านั้น //var สามารถเรียกใช้นอกฟังก์ชั่นได้
 
     sql.query(sqltext, (err,res)=>{  //ฟังก์ชั่นของsql เพื่อประมวลผล
         if(err){
             console.log("err: ",err) //error 
-            result(nul, err);
+            result(null, err);
             return;
         }
 
-        console.log("tutorials; ",res); //result
+        console.log("students; ",res); //result
         result(null, res);
     });
 };
 
-Tutorial.findById = (id, result) => {  //หาโดยใช้ id 
-    sql.query("SELECT * FROM tutorials WHERE id = "+ id, (err,res) => { //ฟังก์ชั่นที่มีฟังก์ชั่นที่เป็นcallbackซ้อนอีกทีเพื่อแยกระหว่างerr ,result
+student.findByName = (name, result) => {  //หาโดยใช้ id 
+    sql.query("SELECT * FROM students WHERE name = "+ name, (err,res) => { //ฟังก์ชั่นที่มีฟังก์ชั่นที่เป็นcallbackซ้อนอีกทีเพื่อแยกระหว่างerr ,result
         if(err){
             result(err, null) //พารามิเตอร์ตัวที่สองที่จะส่งไปยังfindById
             return
@@ -48,8 +51,8 @@ Tutorial.findById = (id, result) => {  //หาโดยใช้ id
     });
 }
 
-Tutorial.getAllPublished = result => {
-    sql.query("SELECT * FROM tutorials WHERE published = true", (err,res) => {
+student.getAllgraduated = result => {
+    sql.query("SELECT * FROM students WHERE graduated = true", (err,res) => {
         if(err){
             result(err, null)
             return
@@ -58,8 +61,9 @@ Tutorial.getAllPublished = result => {
     })
 }
 
-Tutorial.remove = (id, result) => {
-    sql.query("DELETE FROM tutorials WHERE id = ?", id, (err, res) => {
+
+student.remove = (no, result) => {
+    sql.query("DELETE FROM students WHERE no = ?", no, (err, res) => {
         if(err){
             result(err,null)
             return;
@@ -73,4 +77,14 @@ Tutorial.remove = (id, result) => {
     });
 }
 
-module.exports = Tutorial;
+student.removeAll = (result) => { //anonymous function
+    sql.query("DELETE FROM students",(err, res ) => {
+        if(err){
+            result(null,err)
+            return
+        }
+        result(null,res)
+    })
+}
+
+module.exports = student;
